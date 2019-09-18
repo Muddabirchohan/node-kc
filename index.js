@@ -6,12 +6,9 @@ var cors = require('cors')
 var cookieParser = require('cookie-parser');
 var request = require('request');
 
-var kc = Keycloak({
-  url: 'http://localhost:8080/auth',
-  realm: 'Node-Realm',
-  clientId: 'React-Frontend'
-}); 
+// var kc = Keycloak('/keycloak.json'); 
 
+// console.log("hello",kc);
 
 // const expressHbs = require('express-handlebars');
 
@@ -20,6 +17,7 @@ const app = express();
 
 var memoryStore = new session.MemoryStore();
 var keycloak = new Keycloak({ store: memoryStore });
+// console.log(keycloak.checkSso()())
 
 app.use(cors())
 app.use(cookieParser());
@@ -74,46 +72,92 @@ app.get('/test', keycloak.protect(), (req, res)=>{
 //   });
 // });
 
-app.post( '/protect',(req,res)=>{
 
-      // console.log("my token",req.headers.token );
-     
-// check each request for a valid bearer token
-  // assumes bearer token is passed as an authorization header
-  if (req.headers.token) {
-    // configure the request to your keycloak server
-    const options = {
-      method: 'GET',
-      url: `http://localhost:8080/auth/realms/Node-Realm/.well-known/openid-connection/userinfo`,
-      headers: {
-        // add the token you received to the userinfo request, sent to keycloak
-        token: req.headers.token,
-      },
-    };
-console.log("config",options)
-    // send a request to the userinfo endpoint on keycloak
-    request(options, (error, response, body) => {
-      if (error) throw new Error(error);
 
-      // if the request status isn't "OK", the token is invalid
-      if (response.statusCode !== 200) {
-        res.status(401).json({
-          error: `unauthorized`,
-        });
-      }
-      // the token is valid pass request onto your next function
-      else {
-         console.log("response from req")  
-      }
-    });
-  } else {
-    // there is no token, don't process request further
-    res.status(401).json({
-    error: `unauthorized`,
-  });
-  }
+
+
+
+
+
+    // app.get('/apis/me', keycloak.enforcer('user:profile', {response_mode: 'token'}), function (req, res) {
+    //     var token = req.kauth.grant.access_token.content;
+    //     var permissions = token.authorization ? token.authorization.permissions : undefined;
+    //     // show user profile
+    // });
+
+
+app.post( '/protect', keycloak.checkSso(),function(req,res){
+
+console.log(req.headers.authorization)
+
+console.log();
+res.send("hello")
+
+if(req.headers.authorization === req.req.kauth.grant.access_token.signed){
+  console.log("token matched",req.req.kauth.grant.access_token.content)
+}
+
+else{
+console.log("token didnt match")
+}
+
+
+//   if (req.headers.authorization) {
+//     const options = {
+//       method: 'GET',
+//       url: `http://localhost:8080/auth/realms/Node-Realm/.well-known/openid-configuration`,
+//       headers: {
+//         token: req.headers.authorization,
+//       },
+//     };
+// console.log(options)
+//     // send a request to the userinfo endpoint on keycloak
+//     request(options, (error, response, body) => {
+//       if (error) throw new Error(error);
+
+//       // if the request status isn't "OK", the token is invalid
+//       if (response.statusCode !== 200) {
+//         res.status(401).json({
+//           error: `unauthorized`,
+//         });
+//       }
+//       // the token is valid pass request onto your next function
+//       else {
+//          console.log("response from req")  
+//       }
+//     });
+//   } else {
+//     // there is no token, don't process request further
+//     res.status(401).json({
+//     error: `unauthorized`,
+//   });
+//   }
 });
 
+
+// app.get( '/checksso', keycloak.checkSso(), (req,res)=>{
+// if(keycloak.checkSso(res)){
+//   console.log(res)
+// }
+// else{
+//   console.log("nun")
+// }
+// } );
+
+
+
+// app.get( '/check-sso', keycloak.checkSso(), function(res,req){
+//   console.log(req.req.kauth.grant.access_token.signed);
+//   const content = req.req.kauth.grant.access_token.content;
+//   if(content){
+//   console.log("token matched",content.preferred_username,content.email,content.given_name)
+//   }
+// } );
+
+
+
+
+app.use( keycloak.middleware( { logout: '/logoff' } ));
       // console.log(req);
       // res.send("hello")
 // res.send(req.body)
