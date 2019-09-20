@@ -1,8 +1,8 @@
 {
-    "realm": "Node-Realm",
-    "auth-server-url": "http://localhost:8080/auth",
-    "ssl-required": "external",
-    "resource": "Node-Backend",
-    "public-client": true,
-    "confidential-port": 0
-  }
+  "realm": "React App",
+  "auth-server-url": "http://localhost:8080/auth",
+  "ssl-required": "external",
+  "resource": "node-react",
+  "public-client": true,
+  "confidential-port": 0
+}

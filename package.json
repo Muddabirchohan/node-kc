@@ -14,7 +14,9 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
+    "get-keycloak-public-key": "^1.0.3",
     "keycloak-connect": "^7.0.0",
+    "node-fetch": "^2.6.0",
     "nodemon": "^1.19.2",
     "request": "^2.88.0"
   }
