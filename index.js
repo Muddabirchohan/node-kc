@@ -6,6 +6,9 @@ const middleware = require("./routes/middleware");
 var session = require("express-session");
 var cors = require("cors");
 
+// var decoded = jwt.decode(token, secret, false);
+// console.log("decoded", decoded);
+
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -26,6 +29,10 @@ app.use(
 );
 
 app.use("/middleware", middleware);
+
+app.use("*", function (req, res) {
+  res.send("Not found!");
+});
 
 app.listen(8000, function () {
   console.log("Started at port 8000");

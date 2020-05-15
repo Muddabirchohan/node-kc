@@ -1,8 +1,11 @@
 var express = require("express");
 var app = express.Router();
 var { keycloak } = require("./../kcconfig");
+var validateToken = require("./../validate");
 
 app.post("/service/token", function (req, res) {
+  const result = validateToken(req.query.token);
+  console.log("res", result);
   res.send({ data: "send" });
 });
 app.get("/service/public", function (req, res) {
